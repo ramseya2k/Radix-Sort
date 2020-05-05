@@ -1,0 +1,122 @@
+import java.util.Arrays;
+class Main 
+{
+  public static void main(String[] args) 
+  {
+    int[] originalArray = {10, 5, 20, 5, 284, 203, 90, 54}; // length of 8
+    int [] tempArray = originalArray;
+    originalArray = copyArray(tempArray);
+    System.out.println("ORIGINAL ARRAY\n"+Arrays.toString(tempArray)+"\n");
+    radixSortAscending(originalArray, originalArray.length);
+    System.out.println("ASCENDING ORDER\n"+Arrays.toString(originalArray)+"\n");
+    originalArray = copyArray(tempArray);
+    System.out.println("ORIGINAL ARRAY\n"+Arrays.toString(tempArray)+"\n");
+    radixSortDescending(originalArray, originalArray.length);
+    System.out.println("DESCENDING ORDER\n"+Arrays.toString(originalArray)+"\n");
+  }
+  /*****************************************************************/
+  public static int getLargest(int arr[], int n) // this function gets the largest number in the array 
+  {
+    int large = arr[0];
+    for(int i=1; i<n; i++)
+    {
+      if(arr[i] > large)
+      {
+        large = arr[i]; // if the next element in the array is greater than the number assign it to be the largest number 
+      }
+    }
+    return large; 
+  }
+  /*****************************************************************/
+  public static void radixSortAscending(int arr[], int n) // this function starts the radix sort for the array in ascending order 
+  {
+    int large = getLargest(arr, arr.length); // gets largest number in the array 
+    for (int i=1; large/i > 0; i*=10) // grows exponentially 
+    {
+      countArray(arr, n, i);
+    } 
+  }
+  /*****************************************************************/
+  public static int getSmallest(int arr[], int n) // this function gets the smallest number in the array 
+  {
+    int smallest = arr[0];
+    for(int i=1; i<n; i++)
+    {
+      if(arr[i] < smallest) // if the next element in the array is smaller  than the number assign it to be the smallest number 
+      {
+        smallest = arr[i];
+      }
+    }
+    return smallest; 
+  }
+  /*****************************************************************/
+  public static int[] copyArray(int[] arr) // copies the array 
+  {
+    int[] tempArray = new int[arr.length];
+    for(int row=0; row<arr.length;row++)
+    {
+        tempArray [row] = arr[row];
+    }
+    return tempArray;
+  }
+  /*****************************************************************/
+  public static void countArray(int arr[], int n, int grow)
+  {
+    int newPosition[] = new int[n];
+    int index[] = new int[10]; 
+    for (int i = 0; i < n; i++) // gets the occurences in index 
+    {
+      index[(arr[i]/grow)%10]++; 
+    }
+    for (int i = 1; i < 10; i++) // updates position 
+    { 
+      index[i] += index[i - 1]; 
+    }
+    // sorts the new array 
+    for (int i = n - 1; i >= 0; i--) 
+    { 
+      newPosition[index[(arr[i]/grow)%10]-1] = arr[i]; 
+      index[(arr[i]/grow)%10 ]--; 
+    }
+    // updates the array  
+    for (int i = 0; i < n; i++)
+    {
+      arr[i] = newPosition[i]; 
+    } 
+  } 
+  /*****************************************************************/
+  public static void radixSortDescending(int a[], int n)
+  {
+    int m=0; // max 
+    int expo=1; // start at 1 before it grows exponentially 
+    int [] b = new int[a.length];
+    for (int i=0; i<n; i++)
+    {    
+      if (a[i]>m) // if the element is greater than max then update it 
+      {
+        m=a[i];
+      }
+    }
+    while (m/expo>0) // loops until the max/exponent is 0 
+    {
+      int[] newArray = new int[10];
+      for (int i=0; i<n; i++) // gets the occurences in the index 
+      {
+        newArray[9-a[i]/expo%10]++;
+      }
+      for (int i=1; i<10; i++) // updates the position 
+      {
+        newArray[i]+=newArray[i-1];
+      }
+      for (int i=n-1; i>=0; i--) // sorts the new array 
+      {
+        b[--newArray[9-a[i]/expo%10]]=a[i];
+      }
+      for (int i=0; i<n;i++) // updates the array 
+      {
+        a[i]=b[i];
+      }
+      expo*=10; // grows exponentially by 10 
+    }
+  }
+}
